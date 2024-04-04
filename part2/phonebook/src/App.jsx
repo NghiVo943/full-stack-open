@@ -4,6 +4,7 @@ import personService from './services/persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import Notification from './components/Notification'
 
 const App = () => {
 
@@ -11,6 +12,7 @@ const App = () => {
   const [name, setName] = useState('')
   const [number, setNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [notification, setNotification] = useState({})
 
   useEffect(() => {personService.getAll().then(data => setPersons(data))}, [])
 
@@ -28,8 +30,9 @@ const App = () => {
           .update(changedPerson.id, changedPerson)
             .then(returnedPerson => setPersons(persons.map(person => person.name === name ? returnedPerson : person)))
             .catch(_ => {
-              alert(`${person.name} was already deleted from server`)
+              setNotification({ message : `Information of ${person.name} has already been removed from server`, type : 'error' })
               setPersons(persons.filter(person => person.name !== name))
+              setTimeout(() => setNotification({}), 5000)
             })
       }
       return
@@ -46,6 +49,8 @@ const App = () => {
           setPersons(persons.concat(returnedPerson))
           setName('')
           setNumber('')
+          setNotification({ message: `Added ${returnedPerson.name}`, type: 'noti'})
+          setTimeout(() => setNotification({}), 5000)
         })
   }
 
@@ -64,7 +69,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-
+      <Notification message={notification.message} type={notification.type}/>
       <Filter filter={filter} filterHandler={handleFilter} />
 
       <h3>Add a new</h3>
