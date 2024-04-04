@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import axios from 'axios'
 
 const Filter = ({ filter, filterHandler }) => {
   return (
@@ -37,6 +38,14 @@ const App = () => {
   const [number, setNumber] = useState('')
   const [filter, setFilter] = useState('')
 
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        setPersons(response.data)
+      })
+  }, [])
+
   const handleName = (event) => {setName(event.target.value)}
   const handleNumber = (event) => {setNumber(event.target.value)}
   const handleFilter = (event) => {setFilter(event.target.value)}
@@ -53,7 +62,7 @@ const App = () => {
       number : number,
       id : persons.length
     }
-    
+
     setPersons(persons.concat(newPerson))
     setName('')
     setNumber('')
