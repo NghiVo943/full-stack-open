@@ -1,44 +1,9 @@
 import { useState, useEffect } from "react"
 import personService from './services/persons'
 
-const Filter = ({ filter, filterHandler }) => {
-  return (
-    <div>filter shown with <input value = {filter} onChange={filterHandler} /></div>
-  )
-}
-
-const PersonForm = ({ name, number, nameHandler, numberHandler, submitHandler }) => {
-  return (
-    <form onSubmit={submitHandler}>
-      <div>name: <input value = {name} onChange={nameHandler} /></div>
-      <div>number: <input value = {number} onChange={numberHandler} /></div>
-      <div><button type="submit" >add</button></div>
-    </form>
-  )
-}
-
-const Person = ({ name, number, deleteHandler }) => {
-  return (
-    <div>
-      <span>{name} {number} </span>
-      <button onClick={deleteHandler}>delete</button>
-    </div>
-  )
-}
-
-const Persons = ({ persons, deleteHandler }) => {
-  return (
-    <div>
-      {persons.map(person => 
-        <Person 
-          key={person.id} 
-          name={person.name} 
-          number={person.number} 
-          deleteHandler={() => deleteHandler(person.id)}
-        />)}
-    </div>
-  )
-}
+import Filter from './components/Filter'
+import PersonForm from './components/PersonForm'
+import Persons from './components/Persons'
 
 const App = () => {
 
