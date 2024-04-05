@@ -125,7 +125,69 @@ describe('when there is initially some blogs saved', () => {
             assert(!titles.includes('TDD harms architecture'))
             assert(!urls.includes('http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html'))
         })
-      })
+    })
+    describe('deletion of a blog', () => {
+        test('succeeds with status code 204 if id is valid', async () => {
+            const blogsAtStart = await helper.blogsInDb()
+            const blogToDelete = blogsAtStart[0]
+    
+            await api
+                .delete(`/api/blogs/${blogToDelete.id}`)
+                .expect(204)
+    
+            const blogsAtEnd = await helper.blogsInDb()
+    
+            assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
+    
+            const titles = blogsAtEnd.map(blog => blog.title)
+            const urls = blogsAtEnd.map(blog => blog.url)
+            assert(!titles.includes(blogToDelete.title))
+            assert(!urls.includes(blogToDelete.url))
+        })
+    })
+
+    describe('update of a new blog', () => {
+        test('succeeds for existing blog', async () => {
+            const blogsAtStart = await helper.blogsInDb()
+            const blogToUpdate = blogsAtStart[0]
+    
+            const response = await api
+                .put(`/api/blogs/${blogToUpdate.id}`)
+                .send({ likes: blogToUpdate.likes + 1 })
+                .expect(200)
+                .expect('Content-Type', /application\/json/)
+    
+            const blogsAtEnd = await helper.blogsInDb()
+            assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+    
+            const titles = blogsAtEnd.map(blog => blog.title)
+            const urls = blogsAtEnd.map(blog => blog.url)
+            assert(titles.includes(blogToUpdate.title))
+            assert(urls.includes(blogToUpdate.url))
+            assert.strictEqual(blogsAtEnd.find(blog => blog.id.toString() === response.body.id.toString()).likes, blogToUpdate.likes + 1)
+        })
+
+        test('fails if blog with id does not exist', async () => {
+            const nonExistingId = await helper.nonExistingId()
+            await api
+                .put(`/api/blogs/${nonExistingId}`)
+                .send({
+                    title: "TDD harms architecture",
+                    author: "Robert C. Martin",
+                    likes: 0,
+                    url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
+                })
+                .expect(404)
+    
+            const blogsAtEnd = await helper.blogsInDb()
+            assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+    
+            const titles = blogsAtEnd.map(blog => blog.title)
+            const urls = blogsAtEnd.map(blog => blog.url)
+            assert(!titles.includes('TDD harms architecture'))
+            assert(!urls.includes('http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html'))
+        })
+    })
 })
 
 after(async () => {
