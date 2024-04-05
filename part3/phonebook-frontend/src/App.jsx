@@ -29,9 +29,9 @@ const App = () => {
         personService
           .update(changedPerson.id, changedPerson)
             .then(returnedPerson => setPersons(persons.map(person => person.name === name ? returnedPerson : person)))
-            .catch(_ => {
-              setNotification({ message : `Information of ${person.name} has already been removed from server`, type : 'error' })
-              setPersons(persons.filter(person => person.name !== name))
+            .catch(error => {
+              setNotification({ message : error.response.data.error, type : 'error' })
+              personService.getAll().then(data => setPersons(data))
               setTimeout(() => setNotification({}), 5000)
             })
       }
@@ -51,6 +51,9 @@ const App = () => {
           setNumber('')
           setNotification({ message: `Added ${returnedPerson.name}`, type: 'noti'})
           setTimeout(() => setNotification({}), 5000)
+        })
+        .catch(error => {
+          setNotification({ message : error.response.data.error, type : 'error' })
         })
   }
 
