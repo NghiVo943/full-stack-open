@@ -9,9 +9,11 @@ const api = supertest(app)
 const helper = require('./test_helper')
 
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 describe('when there is initially some blogs saved', () => {
     beforeEach(async () => {
+        await User.deleteMany({})
         await Blog.deleteMany({})
         await Blog.insertMany(helper.initialBlogs)
     })
@@ -38,6 +40,7 @@ describe('when there is initially some blogs saved', () => {
 
     describe('addition of a new blog', () => {
         test('succeeds with valid data', async () => {
+            const token = await helper.userToken()
             const newBlog = {
                 title: "TDD harms architecture",
                 author: "Robert C. Martin",
@@ -47,6 +50,7 @@ describe('when there is initially some blogs saved', () => {
     
             await api
                 .post('/api/blogs')
+                .set({ authorization : `Bearer ${token}` })
                 .send(newBlog)
                 .expect(201)
                 .expect('Content-Type', /application\/json/)
@@ -61,6 +65,7 @@ describe('when there is initially some blogs saved', () => {
         })
 
         test('succeeds even without attribute likes', async () => {
+            const token = await helper.userToken()
             const newBlog = {
               title: "TDD harms architecture",
               author: "Robert C. Martin",
@@ -69,6 +74,7 @@ describe('when there is initially some blogs saved', () => {
       
             const response = await api
                 .post('/api/blogs')
+                .set({ authorization : `Bearer ${token}` })
                 .send(newBlog)
                 .expect(201)
                 .expect('Content-Type', /application\/json/)
@@ -85,6 +91,7 @@ describe('when there is initially some blogs saved', () => {
         })
     
         test('fails with status code 400 if title is missing', async () => {
+            const token = await helper.userToken()
             const newBlog = {
                 author: "Robert C. Martin",
                 url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
@@ -93,6 +100,7 @@ describe('when there is initially some blogs saved', () => {
     
             await api
                 .post('/api/blogs')
+                .set({ authorization : `Bearer ${token}` })
                 .send(newBlog)
                 .expect(400)
     
@@ -106,6 +114,7 @@ describe('when there is initially some blogs saved', () => {
         })
 
         test('fails with status code 400 if url is missing', async () => {
+            const token = await helper.userToken()
             const newBlog = {
                 title: "TDD harms architecture",
                 author: "Robert C. Martin",
@@ -114,6 +123,7 @@ describe('when there is initially some blogs saved', () => {
     
             await api
                 .post('/api/blogs')
+                .set({ authorization : `Bearer ${token}` })
                 .send(newBlog)
                 .expect(400)
     
