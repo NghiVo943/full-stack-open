@@ -24,9 +24,9 @@ const Blog = ({
     }
   }
   return (
-    <div style={blogStyle}>
+    <div className='blog' style={blogStyle}>
       <div> {blog.title} {blog.author} <button onClick={toggleVisibility}>{visible ? 'hide' : 'view'}</button>
-        <div style={{ display: visible ? '' : 'none' }}>
+        <div className='blog-details' style={{ display: visible ? 'block' : 'none' }}>
           <div>{blog.url}</div>
           <div>likes {blog.likes} <button onClick={handleLike}>like</button></div>
           <div>{blog.user.name}</div>
