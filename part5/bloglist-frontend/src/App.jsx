@@ -18,10 +18,6 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [message, setMessage] = useState(null)
 
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
-
   const blogFormRef = useRef()
 
   useEffect(() => {
@@ -76,7 +72,7 @@ const App = () => {
   const addBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility()
     const newBlog = await blogService.create(blogObject)
-    setBlogs(blogs.concat(newBlog))
+    setBlogs(blogs.concat({ ...newBlog, user: user }))
     setMessage({
       message: `a new blog ${newBlog.title} by ${newBlog.author} added`,
       type: 'noti'
@@ -120,7 +116,7 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <Notification message={message} />
-      <div>{user.username} logged in <button onClick={handleLogout}>logout</button></div>
+      <div>{user.name} logged in <button onClick={handleLogout}>logout</button></div>
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
         <h2>create new</h2>
         <BlogForm createBlog={addBlog}/>

@@ -24,7 +24,7 @@ const Blog = ({
     }
   }
   return (
-    <div className='blog' style={blogStyle}>
+    <div className='blog' data-testid = 'blog' style={blogStyle}>
       <div> {blog.title} {blog.author} <button onClick={toggleVisibility}>{visible ? 'hide' : 'view'}</button>
         <div className='blog-details' style={{ display: visible ? 'block' : 'none' }}>
           <div>{blog.url}</div>
