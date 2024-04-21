@@ -12,6 +12,7 @@ const AnecdoteForm = () => {
     const handleSubmit = (event) => {
         event.preventDefault()
         dispatch(newAnecdote(anecdote))
+        setAnecdote('')
     }
     return (
         <form onSubmit={handleSubmit}>
